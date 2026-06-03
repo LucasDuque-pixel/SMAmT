@@ -13,7 +13,7 @@ fuso_brasilia = ZoneInfo("America/Sao_Paulo")
 def receber_dados():
     try:
         dados = request.get_json()
-        if (dados.get("ruido")==0):
+        if (dados.get("ruido")<5):
             som = "Apropriado"
         else:
             som = "Ruidoso"

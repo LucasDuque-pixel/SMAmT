@@ -14,7 +14,6 @@ const char* serverName = "http://10.120.183.218:5000/dados";
 DHT dht(DHTPIN, DHTTYPE);
 
 const int sensor = 32;
-const int led = 19;
 bool estado = 0;
 
 void setup() {
@@ -24,8 +23,6 @@ void setup() {
   WiFi.disconnect();
 
   pinMode(sensor, INPUT);
-  pinMode(led, OUTPUT);
-  digitalWrite(led,LOW);
  
   delay(100);
 
@@ -39,13 +36,12 @@ void setup() {
 }
 
 void loop() {
-  delay(1000);
   unsigned ruido=0;
-  if (digitalRead(sensor) == HIGH)//Se o sensor detectar o ruído seu nivel lógico será 1, ou seja, HIGH. Então ele fará a ação.
-  { 
-      ruido=1;
-      estado = digitalRead(led); //Verifica o estado do sensor e armazena 
-      digitalWrite(led, !estado); //Altera o estado do LED (caso esteja ligado ele desliga e caso esteja desligado ele liga)
+  for (unsigned indice=0; indice<50; indice++){
+    delay(100);
+    if (digitalRead(sensor) == HIGH){//Se o sensor detectar o ruído seu nivel lógico será 1, ou seja, HIGH. Então ele fará a ação.
+      ruido+=1;
+    }
   }
 
   float temperatura = dht.readTemperature();

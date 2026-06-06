@@ -7,7 +7,7 @@
 
 const char* ssid = "AndroidLucas";
 const char* password = "kags1111";
-const char* serverName = "https://monitoramento-esp32.onrender.com/dados"; 
+const char* serverName = "https://smamt.onrender.com/dados"; 
 
 #define DHTPIN 4 
 #define DHTTYPE DHT11 

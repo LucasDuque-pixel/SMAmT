@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
-client = MongoClient("mongodb+srv://lucasduquema_db_user:aEdWSn0hYx5rc9zs@mongodb-duque.u0nd9yw.mongodb.net/")
+client = MongoClient("mongodb://lucasduquema_db_user:-AVsm3jw4DSTMb.@ac-zlfepsl-shard-00-00.u0nd9yw.mongodb.net:27017,ac-zlfepsl-shard-00-01.u0nd9yw.mongodb.net:27017,ac-zlfepsl-shard-00-02.u0nd9yw.mongodb.net:27017/?ssl=true&replicaSet=atlas-h92ahp-shard-0&authSource=admin&appName=MongoDB-Duque")
 db = client["monitoramento"]
 colecao = db["dados_dht11"]
 fuso_brasilia = ZoneInfo("America/Sao_Paulo")

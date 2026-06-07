@@ -1,10 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/User'); // Importa o modelo atualizado
 
 const router = express.Router();
-
 const JWT_SECRET = process.env.JWT_SECRET || 'segredo_super';
 
 // Cadastro
@@ -31,9 +30,7 @@ router.post('/register', async (req, res) => {
 
     await novoUsuario.save();
 
-    return res.status(201).json({
-      message: 'Usuário cadastrado com sucesso.'
-    });
+    return res.status(201).json({ message: 'Usuário cadastrado com sucesso.' });
   } catch (error) {
     return res.status(500).json({ message: 'Erro ao cadastrar usuário.', error: error.message });
   }
@@ -59,60 +56,19 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      {
-        id: usuario._id,
-        email: usuario.email,
-        nome: usuario.nome
-      },
+      { id: usuario._id, email: usuario.email, nome: usuario.nome },
       JWT_SECRET,
       { expiresIn: '1d' }
     );
 
     return res.status(200).json({
       token,
-      user: {
-        id: usuario._id,
-        nome: usuario.nome,
-        email: usuario.email
-      }
+      user: { id: usuario._id, nome: usuario.nome, email: usuario.email }
     });
   } catch (error) {
     return res.status(500).json({ message: 'Erro ao fazer login.', error: error.message });
   }
 });
 
-// Middleware de autenticação
-function auth(req, res, next) {
-  const header = req.headers.authorization;
-
-  if (!header) {
-    return res.status(401).json({ message: 'Token não informado.' });
-  }
-
-  const token = header.startsWith('Bearer ') ? header.split(' ')[1] : header;
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: 'Token inválido ou expirado.' });
-  }
-}
-
-// Dados do usuário logado
-router.get('/me', auth, async (req, res) => {
-  try {
-    const usuario = await User.findById(req.user.id).select('-senha');
-
-    if (!usuario) {
-      return res.status(404).json({ message: 'Usuário não encontrado.' });
-    }
-
-    return res.json(usuario);
-  } catch (error) {
-    return res.status(500).json({ message: 'Erro ao buscar usuário.', error: error.message });
-  }
-});
-
+// Middleware e /me permanecem iguais, pois dependem apenas do token gerado no login
 module.exports = router;

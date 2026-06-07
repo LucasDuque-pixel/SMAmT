@@ -18,7 +18,9 @@ const UserSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  collection: 'users', // Força o nome da coleção
+  dbName: 'monitoramento' // O "GPS": força a busca neste banco de dados
 });
 
 module.exports = mongoose.model('User', UserSchema);

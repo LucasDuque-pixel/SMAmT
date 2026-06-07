@@ -15,6 +15,10 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
   Map<String, dynamic>? get user => _user;
+  
+  // ---> A SOLUÇÃO AQUI <---
+  // Expondo o token publicamente para que o LeituraProvider possa usá-lo na requisição
+  String? get token => _token;
 
   AuthProvider() {
     checkLogin();
@@ -32,7 +36,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(String email, String senha) async {
+  // A MUDANÇA ESTÁ AQUI: Adicionamos o bool manterConectado
+  Future<bool> login(String email, String senha, bool manterConectado) async {
     try {
       final response = await _authService.login(
         email: email,
@@ -43,7 +48,10 @@ class AuthProvider extends ChangeNotifier {
         _token = response['token'];
         _user = response['user'];
 
-        await _storage.write(key: 'token', value: _token);
+        // Se o usuário marcou a caixa, salva fisicamente no navegador (persiste no F5)
+        if (manterConectado) {
+          await _storage.write(key: 'token', value: _token);
+        }
 
         _isAuthenticated = true;
         notifyListeners();

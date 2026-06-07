@@ -2,21 +2,28 @@
 #include <HTTPClient.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
+#include <driver/i2s.h>
+#include <string>
 
 const char* ssid = "AndroidLucas";
 const char* password = "kags1111";
-
 const char* serverName = "https://smamt.onrender.com/dados"; 
 
 #define DHTPIN 4 
 #define DHTTYPE DHT11 
 DHT dht(DHTPIN, DHTTYPE);
 
+const int sensor = 32;
+bool estado = 0;
+
 void setup() {
   Serial.begin(115200);
   dht.begin();
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
+
+  pinMode(sensor, INPUT);
+ 
   delay(100);
 
   WiFi.begin(ssid, password);
@@ -29,7 +36,13 @@ void setup() {
 }
 
 void loop() {
-  delay(90000);
+  unsigned ruido=0;
+  for (unsigned indice=0; indice<50; indice++){
+    delay(100);
+    if (digitalRead(sensor) == HIGH){//Se o sensor detectar o ruído seu nivel lógico será 1, ou seja, HIGH. Então ele fará a ação.
+      ruido+=1;
+    }
+  }
 
   float temperatura = dht.readTemperature();
   float umidade = dht.readHumidity();
@@ -47,6 +60,7 @@ void loop() {
     JsonDocument doc;
     doc["temperatura"] = temperatura;
     doc["umidade"] = umidade;
+    doc["ruido"] = ruido;
     
     String requestBody;
     serializeJson(doc, requestBody);

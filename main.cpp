@@ -6,7 +6,7 @@
 const char* ssid = "AndroidLucas";
 const char* password = "kags1111";
 
-const char* serverName = "http://10.236.92.218:5000/dados"; 
+const char* serverName = "https://smamt.onrender.com/dados"; 
 
 #define DHTPIN 4 
 #define DHTTYPE DHT11 

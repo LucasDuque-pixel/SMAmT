@@ -12,7 +12,7 @@ class LeituraProvider with ChangeNotifier {
   List<Leitura> get historico => _historico;
   bool get isLoading => _isLoading;
 
-  final String _baseUrl = 'http://10.174.40.136:3000/api/v1/leituras';
+  final String _baseUrl = 'http://10.174.40.218:3000/api/v1/leituras';
 
   // O context é necessário para buscar o token do AuthProvider
   Future<void> buscarHistorico(BuildContext context) async {

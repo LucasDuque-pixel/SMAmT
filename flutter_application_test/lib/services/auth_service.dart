@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final String baseUrl = "http://10.174.40.218:3000";
+  final String baseUrl = "https://smamt-82zk.onrender.com";
 
   Future<bool> register({
     required String nome,

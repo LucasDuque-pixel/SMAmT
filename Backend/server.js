@@ -33,24 +33,7 @@ mongoose.connect(process.env.MONGO_URI)
   process.exit(1); 
 });
 
-router.get('/teste-email', async (req, res) => {
 
-    try {
-
-        await enviarEmailBoasVindas(
-            "Teste",
-            "henriquebarbsg@gmail.com"
-        );
-
-        res.send("Email enviado");
-
-    } catch (e) {
-
-        console.error(e);
-
-        res.status(500).send(e.message);
-    }
-});
 
 // Rotas
 app.use('/auth', require('./routes/auth'));

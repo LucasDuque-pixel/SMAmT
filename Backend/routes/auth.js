@@ -86,5 +86,24 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.get('/teste-email', async (req, res) => {
+
+    try {
+
+        await enviarEmailBoasVindas(
+            "Teste",
+            "henriquebarbsg@gmail.com"
+        );
+
+        res.send("Email enviado");
+
+    } catch (e) {
+
+        console.error(e);
+
+        res.status(500).send(e.message);
+    }
+});
+
 // Middleware e /me permanecem iguais, pois dependem apenas do token gerado no login
 module.exports = router;

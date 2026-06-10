@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User'); // Importa o modelo atualizado
+const {enviarEmailBoasVindas} = require('../services/emailService');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'segredo_super';
@@ -29,6 +30,11 @@ router.post('/register', async (req, res) => {
     });
 
     await novoUsuario.save();
+
+    await enviarEmailBoasVindas(
+        email,
+        nome
+    );
 
     return res.status(201).json({ message: 'Usuário cadastrado com sucesso.' });
   } catch (error) {

@@ -31,14 +31,16 @@ router.post('/register', async (req, res) => {
 
   await novoUsuario.save();
 
+  console.log("Email recebido:", email);
+
   enviarEmailBoasVindas(
       nome,
       email
   ).catch(err => {
       console.error("===== ERRO EMAIL =====");
-      console.error(erroEmail);
-      console.error("Mensagem:", erroEmail.message);
-      console.error("Código:", erroEmail.code);
+      console.error(err);
+      console.error("Mensagem:", err.message);
+      console.error("Código:", err.code);q
       console.error("======================");
   });
 
@@ -86,24 +88,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.get('/teste-email', async (req, res) => {
 
-    try {
-
-        await enviarEmailBoasVindas(
-            "Teste",
-            "henriquebarbsg@gmail.com"
-        );
-
-        res.send("Email enviado");
-
-    } catch (e) {
-
-        console.error(e);
-
-        res.status(500).send(e.message);
-    }
-});
 
 // Middleware e /me permanecem iguais, pois dependem apenas do token gerado no login
 module.exports = router;

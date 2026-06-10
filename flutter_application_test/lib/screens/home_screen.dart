@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFF09090B), // Fundo All-Black Premium
       body: Consumer<LeituraProvider>(
         builder: (context, provider, _) {
-          final leituras = provider.historico;
+          final leituras = provider.historico.reversed.toList();
           final ultima = leituras.isNotEmpty ? leituras.last : null;
 
           return Row(

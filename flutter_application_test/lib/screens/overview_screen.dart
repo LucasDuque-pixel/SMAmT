@@ -22,7 +22,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
     });
   }
 
-  // Cores Neon para o Dark Mode
   Color _getCorTemp(double temp) => temp >= 30 ? const Color(0xFFFF3366) : (temp >= 27 ? const Color(0xFFFFB020) : const Color(0xFF00E676));
   Color _getCorUmid(double umid) => (umid < 30 || umid > 70) ? const Color(0xFFFFB020) : const Color(0xFF00E676);
   Color _getCorRuido(double ruido) => ruido >= 85 ? const Color(0xFFFF3366) : (ruido >= 70 ? const Color(0xFFFFB020) : const Color(0xFF00E676));
@@ -35,15 +34,16 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Fundo All-Black Premium (Zinc 950)
+    final isMobile = MediaQuery.of(context).size.width < 850;
+
     return Scaffold(
       backgroundColor: const Color(0xFF09090B),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'SMAmT // SISTEMA DE MONITORAMENTO', 
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 16)
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: isMobile ? 14 : 16)
         ),
         actions: [
           IconButton(
@@ -67,69 +67,49 @@ class _OverviewScreenState extends State<OverviewScreen> {
           }
 
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 32.0),
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 24.0 : 48.0, vertical: isMobile ? 16.0 : 32.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Detalhado
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Column(
+                isMobile 
+                  ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("VISÃO GERAL", style: TextStyle(fontSize: 48, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1.5)),
+                        const Text("VISÃO GERAL", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1)),
                         const SizedBox(height: 8),
-                        Text(
-                          "Selecione um módulo para análise telemétrica detalhada.", 
-                          style: TextStyle(fontSize: 16, color: Colors.grey.shade400, letterSpacing: 0.5)
-                        ),
+                        Text("Selecione um módulo para análise.", style: TextStyle(fontSize: 14, color: Colors.grey.shade400)),
+                        const SizedBox(height: 16),
+                        _buildSyncBadge(ultima),
                       ],
-                    ),
-                    if (ultima != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF00E676).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFF00E676).withOpacity(0.3)),
-                        ),
-                        child: Row(
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.sensors, color: Color(0xFF00E676), size: 16),
-                            const SizedBox(width: 8),
-                            Text(
-                              "SYNC: ${DateFormat('HH:mm:ss').format(ultima.dataRegistro)}", 
-                              style: const TextStyle(color: Color(0xFF00E676), fontWeight: FontWeight.bold, fontFamily: 'monospace')
-                            ),
+                            const Text("VISÃO GERAL", style: TextStyle(fontSize: 48, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1.5)),
+                            const SizedBox(height: 8),
+                            Text("Selecione um módulo para análise telemétrica detalhada.", style: TextStyle(fontSize: 16, color: Colors.grey.shade400)),
                           ],
                         ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 64),
+                        _buildSyncBadge(ultima),
+                      ],
+                    ),
                 
-                // GRID DOS SEMÁFOROS (Estilo Painel de Controle)
+                SizedBox(height: isMobile ? 32 : 64),
+                
                 Expanded(
                   child: GridView.count(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 40,
-                    mainAxisSpacing: 40,
-                    childAspectRatio: 1.1,
+                    crossAxisCount: isMobile ? 1 : 3,
+                    crossAxisSpacing: isMobile ? 0 : 40,
+                    mainAxisSpacing: isMobile ? 24 : 40,
+                    childAspectRatio: isMobile ? 1.6 : 1.1,
                     children: [
-                      _buildSemaforoCard(
-                        context, 'TEMPERATURA', Icons.thermostat, 
-                        ultima?.temperatura ?? 0, '°C', ultima != null ? _getCorTemp(ultima.temperatura) : Colors.grey.shade800
-                      ),
-                      _buildSemaforoCard(
-                        context, 'UMIDADE', Icons.water_drop, 
-                        ultima?.umidade ?? 0, '%', ultima != null ? _getCorUmid(ultima.umidade) : Colors.grey.shade800
-                      ),
-                      _buildSemaforoCard(
-                        context, 'RUÍDO', Icons.graphic_eq, 
-                        ultima?.ruido ?? 0, 'dB', ultima != null ? _getCorRuido(ultima.ruido) : Colors.grey.shade800
-                      ),
+                      _buildSemaforoCard(context, 'TEMPERATURA', Icons.thermostat, ultima?.temperatura ?? 0, '°C', ultima != null ? _getCorTemp(ultima.temperatura) : Colors.grey.shade800, isMobile),
+                      _buildSemaforoCard(context, 'UMIDADE', Icons.water_drop, ultima?.umidade ?? 0, '%', ultima != null ? _getCorUmid(ultima.umidade) : Colors.grey.shade800, isMobile),
+                      _buildSemaforoCard(context, 'RUÍDO', Icons.graphic_eq, ultima?.ruido ?? 0, 'dB', ultima != null ? _getCorRuido(ultima.ruido) : Colors.grey.shade800, isMobile),
                     ],
                   ),
                 ),
@@ -141,79 +121,71 @@ class _OverviewScreenState extends State<OverviewScreen> {
     );
   }
 
-  Widget _buildSemaforoCard(BuildContext context, String titulo, IconData icone, double valor, String unidade, Color corStatus) {
+  Widget _buildSyncBadge(dynamic ultima) {
+    if (ultima == null) return const SizedBox();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF00E676).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFF00E676).withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.sensors, color: Color(0xFF00E676), size: 16),
+          const SizedBox(width: 8),
+          Text("SYNC: ${DateFormat('HH:mm:ss').format(ultima.dataRegistro)}", style: const TextStyle(color: Color(0xFF00E676), fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSemaforoCard(BuildContext context, String titulo, IconData icone, double valor, String unidade, Color corStatus, bool isMobile) {
     return GestureDetector(
       onTap: () {
-        // Envia para o gráfico específico mantendo a primeira letra maiúscula para bater com a lógica do HomeScreen
         String paramFormatado = titulo == 'TEMPERATURA' ? 'Temperatura' : titulo == 'UMIDADE' ? 'Umidade' : 'Ruído';
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => HomeScreen(parametroAtivoInicial: paramFormatado)),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen(parametroAtivoInicial: paramFormatado)));
       },
       child: Container(
         decoration: BoxDecoration(
-          // Fundo escuro levemente texturizado
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF18181B), Color(0xFF09090B)],
-          ),
+          gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF18181B), Color(0xFF09090B)]),
           borderRadius: BorderRadius.circular(24),
-          // Borda translúcida elegante
           border: Border.all(color: Colors.white.withOpacity(0.05), width: 1.5),
-          // Efeito de "Underglow" usando a cor do status
-          boxShadow: [
-            BoxShadow(
-              color: corStatus.withOpacity(0.08),
-              blurRadius: 40,
-              spreadRadius: 5,
-              offset: const Offset(0, 10),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: corStatus.withOpacity(0.08), blurRadius: 40, spreadRadius: 5, offset: const Offset(0, 10))],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(40.0),
+          padding: EdgeInsets.all(isMobile ? 24.0 : 40.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Ícone com "Glow"
               Container(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(isMobile ? 16 : 24),
                 decoration: BoxDecoration(
-                  color: corStatus.withOpacity(0.1), 
-                  shape: BoxShape.circle,
+                  color: corStatus.withOpacity(0.1), shape: BoxShape.circle,
                   border: Border.all(color: corStatus.withOpacity(0.2)),
-                  boxShadow: [
-                    BoxShadow(color: corStatus.withOpacity(0.2), blurRadius: 20, spreadRadius: -5)
-                  ]
+                  boxShadow: [BoxShadow(color: corStatus.withOpacity(0.2), blurRadius: 20, spreadRadius: -5)]
                 ),
-                child: Icon(icone, size: 64, color: corStatus),
+                child: Icon(icone, size: isMobile ? 48 : 64, color: corStatus),
               ),
-              
               Column(
                 children: [
-                  Text(titulo, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.grey.shade500, letterSpacing: 2)),
-                  const SizedBox(height: 12),
+                  Text(titulo, style: TextStyle(fontSize: isMobile ? 14 : 18, fontWeight: FontWeight.w700, color: Colors.grey.shade500, letterSpacing: 2)),
+                  const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     textBaseline: TextBaseline.alphabetic,
                     children: [
-                      Text(valor.toStringAsFixed(1), style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -2)),
+                      Text(valor.toStringAsFixed(1), style: TextStyle(fontSize: isMobile ? 40 : 56, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -2)),
                       const SizedBox(width: 8),
-                      Text(unidade, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.grey.shade600)),
+                      Text(unidade, style: TextStyle(fontSize: isMobile ? 18 : 24, fontWeight: FontWeight.bold, color: Colors.grey.shade600)),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  // Badge de Status Moderno
+                  SizedBox(height: isMobile ? 8 : 16),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: corStatus.withOpacity(0.1), 
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: corStatus.withOpacity(0.5))
-                    ),
+                    decoration: BoxDecoration(color: corStatus.withOpacity(0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: corStatus.withOpacity(0.5))),
                     child: Text(_getStatus(corStatus), style: TextStyle(color: corStatus, fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 1.5)),
                   ),
                 ],

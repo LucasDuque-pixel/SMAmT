@@ -29,26 +29,22 @@ router.post('/register', async (req, res) => {
       senha: senhaHash
     });
 
-    await novoUsuario.save();
+  await novoUsuario.save();
 
-  try {
+  enviarEmailBoasVindas(
+      nome,
+      email
+  ).catch(err => {
+      console.error("===== ERRO EMAIL =====");
+      console.error(erroEmail);
+      console.error("Mensagem:", erroEmail.message);
+      console.error("Código:", erroEmail.code);
+      console.error("======================");
+  });
 
-      console.log("Tentando enviar email...");
-
-      await enviarEmailBoasVindas(
-          nome,
-          email
-      );
-
-      console.log("Email enviado.");
-
-  } catch (erroEmail) {
-
-      console.error(
-          "Erro ao enviar email:",
-          erroEmail
-      );
-  }
+  return res.status(201).json({
+      message: 'Usuário cadastrado com sucesso.'
+  });
 
     return res.status(201).json({ message: 'Usuário cadastrado com sucesso.' });
   } catch (error) {

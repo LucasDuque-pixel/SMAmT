@@ -1,5 +1,11 @@
 const nodemailer = require('nodemailer');
 
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log(
+    "EMAIL_PASS existe:",
+    !!process.env.EMAIL_PASS
+);
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -14,6 +20,8 @@ async function enviarEmailBoasVindas(nome, email) {
 
     const linkTelegram =
         'https://t.me/SEU_LINK_DO_GRUPO';
+    
+    console.log("Iniciando envio para:", email);
 
     await transporter.sendMail({
         from: `"SMAmT" <${process.env.EMAIL_USER}>`,
@@ -46,7 +54,21 @@ async function enviarEmailBoasVindas(nome, email) {
             </p>
         `,
     });
+    console.log("Email enviado:")
 }
+transporter.verify(function(error, success) {
+
+    if (error) {
+        console.log("SMTP erro:");
+        console.log(error);
+    } else {
+        console.log(
+            "Servidor SMTP conectado com sucesso"
+        );
+    }
+
+});
+
 
 module.exports = {
     enviarEmailBoasVindas,

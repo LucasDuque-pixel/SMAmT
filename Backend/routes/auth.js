@@ -31,10 +31,24 @@ router.post('/register', async (req, res) => {
 
     await novoUsuario.save();
 
-    await enviarEmailBoasVindas(
-        email,
-        nome
-    );
+  try {
+
+      console.log("Tentando enviar email...");
+
+      await enviarEmailBoasVindas(
+          nome,
+          email
+      );
+
+      console.log("Email enviado.");
+
+  } catch (erroEmail) {
+
+      console.error(
+          "Erro ao enviar email:",
+          erroEmail
+      );
+  }
 
     return res.status(201).json({ message: 'Usuário cadastrado com sucesso.' });
   } catch (error) {

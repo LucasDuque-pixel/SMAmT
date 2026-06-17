@@ -15,8 +15,8 @@ class Leitura {
     // Lógica para converter "Apropriado" para um valor numérico seguro (ex: 60dB)
     double converterRuido(dynamic valor) {
       if (valor is num) return valor.toDouble();
-      if (valor.toString().toLowerCase() == "apropriado") return 60.0;
-      return 0.0;
+      if (valor.toString().toLowerCase() == "apropriado") return 45.0;
+      return 90.0;
     }
 
     return Leitura(
